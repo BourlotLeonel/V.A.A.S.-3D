@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maqueta 3D – Semáforos inteligentes con cámara (V.A.A.S.)</title>
+<link rel="stylesheet" href="./css/styles.css"></head><body>
+<canvas id="c"></canvas>
+<div class="pn" id="top"><h1>Semáforos inteligentes · San Lorenzo / Próspero Bovino / 25 de Mayo</h1>
+<div id="clock">--:--</div><div class="row" id="scs"></div>
+<div class="row"><select id="spd"><option value="1">Velocidad x1</option><option value="0">Pausa</option><option value="2">x2</option><option value="4">x4</option><option value="8">x8</option></select>
+<button id="v1">Cenital</button><button id="v2">Esquina</button><button id="v3">Calle</button></div>
+<div class="row">Ver en 3D: <button id="m1" class="on">Con V.A.A.S.</button><button id="m2">Sin V.A.A.S. (30 s fijo)</button></div>
+<div class="row"><select id="dem"><option value="1">Demanda según documento</option><option value="1.5">Demanda ×1,5</option><option value="2">Demanda ×2</option></select><button id="bp">Solicitud peatonal</button><button id="bl">Cortar enlace V.A.A.S.</button></div>
+<div class="row"><label>Alcance de cámara <input type="range" id="rng" min="5" max="90" value="30"> <b id="rv">30 m</b></label></div>
+<div class="row">Cámaras: <button id="vc">Ver cámaras</button><button id="cv">Miniaturas</button><button id="vm0" class="on">Auto (IR de noche)</button><button id="vm1">Normal</button><button id="vm2">Infrarrojo</button></div>
+<div id="mode"></div></div>
+<div class="pn" id="side"><div id="cards"></div><table id="tb"></table><small id="tot" style="color:#93a0b2;display:block;margin-top:6px"></small></div>
+<div class="pn" id="feeds" style="display:none"></div>
+<div class="pn" id="cvw" style="display:none"><div class="row" id="cvt"></div><canvas id="cvc" width="640" height="360"></canvas><div class="row"><button id="cp">◀</button><button id="cn">▶</button><button id="cm0" class="on">Auto</button><button id="cm1">Visión normal</button><button id="cm2">Infrarrojo</button></div><div id="cvi" style="color:#93a0b2"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="./js/00-engine-assets.js"></script>
+<script src="./js/01-redes-viales-y-aceras.js"></script>
+<script src="./js/02-edificios.js"></script>
+<script src="./js/03-parque-y-plaza.js"></script>
+<script src="./js/04-rutas-semaforos-camaras.js"></script>
+<script src="./js/05-modelos-vehiculos.js"></script>
+<script src="./js/06-simulacion-y-control.js"></script>
+<script src="./js/07-estadisticas-y-camaras.js"></script>
+<script src="./js/08-controles-y-bucle.js"></script></body></html>

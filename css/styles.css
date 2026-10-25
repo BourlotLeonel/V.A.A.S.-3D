@@ -1,0 +1,22 @@
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--p:rgba(14,18,26,.9);--t:#e8edf3;--m:#93a0b2;--a:#4cc9f0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0;background:#0e1116;color:var(--t);font:13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.pn{position:fixed;background:var(--p);border:1px solid #2a3342;border-radius:12px;padding:10px 12px;backdrop-filter:blur(6px)}
+#top{left:8px;top:calc(8px + env(safe-area-inset-top,0px));max-width:360px}
+#top h1{font-size:14px;margin:0 0 6px}
+.row{display:flex;flex-wrap:wrap;gap:5px;margin:5px 0;align-items:center}
+button,select{background:#1d2636;color:var(--t);border:1px solid #33425a;border-radius:8px;padding:6px 9px;font:inherit;cursor:pointer}
+button.on{background:var(--a);color:#06202a;border-color:var(--a);font-weight:600}
+#clock{font-size:20px;font-weight:700}#mode{color:var(--m);margin-top:4px}
+#side{right:8px;top:calc(8px + env(safe-area-inset-top,0px));width:300px;max-height:calc(100% - 150px);overflow:auto}
+.card{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #263041}
+.dot{width:14px;height:14px;border-radius:50%;background:#555;flex:none}
+.card b{display:block;font-size:12px}.card small{color:var(--m)}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11.5px}th,td{padding:3px 4px;text-align:right;border-bottom:1px solid #263041}th:first-child,td:first-child{text-align:left}
+th{color:var(--m);font-weight:600}td.g{color:#5be08b;font-weight:700}
+#cvw{left:50%;top:50%;transform:translate(-50%,-50%);width:min(94vw,860px);z-index:5}#cvw canvas{width:100%;border-radius:8px;display:block;background:#000;margin:6px 0}#cvw .row{margin:3px 0}
+#feeds{flex-wrap:wrap;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:6px;justify-content:center;padding:6px;pointer-events:none}
+.f{position:relative;pointer-events:auto;cursor:zoom-in}.f.big canvas{width:min(46vw,520px)}.f canvas{width:min(30vw,260px);aspect-ratio:16/9;border-radius:6px;display:block;background:#000}
+.f span{position:absolute;left:4px;top:2px;font-size:10px;color:#fff;text-shadow:0 0 3px #000}
+@media(max-width:700px){#side{top:auto;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:auto;left:8px;right:8px;max-height:38%}#top{right:8px;max-width:none}.f span{font-size:7px}}
