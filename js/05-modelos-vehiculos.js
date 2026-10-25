@@ -3,8 +3,8 @@ const TY=[{n:'Auto',L:4.9,W:2,H:1.55,vm:11.1,ac:2.6,w:.68,idle:.8,f:2.348},{n:'M
  {n:'Colectivo',L:10,W:2.5,H:3.2,vm:9.7,ac:1.4,w:.08,idle:2.5,f:2.689},{n:'Camión',L:11,W:2.5,H:3.4,vm:8.3,ac:1,w:.04,idle:3,f:2.689}];
 const flake=ctex(64,64,(g,W,H)=>{g.fillStyle='#d8d8d8';g.fillRect(0,0,W,H);for(let i=0;i<900;i++){g.fillStyle=rnd()<.5?'rgba(255,255,255,.4)':'rgba(0,0,0,.28)';g.fillRect(rnd()*W,rnd()*H,1,1)}},3,3);
 const cmat={},EM=m=>{m.envMap=curEnv;envMats.push(m);return m};
-const MC=c=>cmat[c]||(cmat[c]=EM(new T.MeshStandardMaterial({color:c,roughness:.3,metalness:.6,map:flake,bumpMap:flake,bumpScale:.4,envMapIntensity:.9})));
-const carPaint=c=>cmat['paint'+c]||(cmat['paint'+c]=EM(new T.MeshStandardMaterial({color:c,roughness:.24,metalness:.34,envMapIntensity:1.25}))),carWindow=new T.MeshBasicMaterial({color:0x050607,side:T.DoubleSide,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1}),doorSeam=new T.LineBasicMaterial({color:0x25282b});
+const MC=c=>cmat[c]||(cmat[c]=EM(new T.MeshPhysicalMaterial({color:c,roughness:.24,metalness:.42,map:flake,bumpMap:flake,bumpScale:.14,envMapIntensity:1.7,clearcoat:.78,clearcoatRoughness:.18})));
+const carPaint=c=>cmat['paint'+c]||(cmat['paint'+c]=EM(new T.MeshPhysicalMaterial({color:c,roughness:.2,metalness:.34,map:flake,bumpMap:flake,bumpScale:.08,envMapIntensity:1.8,clearcoat:.85,clearcoatRoughness:.14}))),carWindow=EM(new T.MeshPhysicalMaterial({color:0x17232a,side:T.DoubleSide,roughness:.16,metalness:.06,envMapIntensity:1.35,clearcoat:.85,clearcoatRoughness:.08,transparent:true,opacity:.94,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1})),doorSeam=new T.LineBasicMaterial({color:0x25282b});
 const hex=c=>'#'+c.toString(16).padStart(6,'0'),sh=(c,f)=>{const k=v=>Math.max(0,Math.min(255,v*f|0));return`rgb(${k(c>>16&255)},${k(c>>8&255)},${k(c&255)})`};
 const mkM=(w,h,fn,r=.4,mt=.4,bm=.5)=>{const tx=ctex(w,h,fn);return EM(new T.MeshStandardMaterial({roughness:r,metalness:mt,map:tx,bumpMap:tx,bumpScale:bm,envMapIntensity:.8}))};
 function dirt(g,W,H,a){const q=g.createLinearGradient(0,H*.45,0,H);q.addColorStop(0,'rgba(80,62,44,0)');q.addColorStop(1,`rgba(80,62,44,${a})`);g.fillStyle=q;g.fillRect(0,0,W,H);for(let i=0;i<W*H/60;i++){g.fillStyle=`rgba(60,45,30,${rnd()*.25})`;g.fillRect(rnd()*W,H*(.55+rnd()*.45),1+rnd()*2,1+rnd()*2)}}
@@ -78,11 +78,11 @@ function vehicle(ty,col,col2,model=0){const g=new T.Group();
   if(pickup){box(1.72,.12,1.3,carPaint(col),0,.88,-1.42,g);[-1,1].forEach(a=>box(.08,.32,1.75,carPaint(col),a*.84,.95,-1.45,g));box(1.65,.05,1.15,dark,0,.96,-1.4,g)}
   if(tall){box(1.55,.07,.08,dark,0,v.roof+.015,0,g);[-.48,.48].forEach(x=>box(.08,.06,1.05,dark,x,v.roof+.04,0,g))}
   g.scale.setScalar(v.scale)}
- else if(ty===1){wheel(g,0,.8,.33,.14);wheel(g,0,-.8,.33,.14);box(.2,.28,.9,dark,0,.55,0,g);box(.3,.3,.4,finM,0,.42,.1,g);box(.28,.2,.5,MC(col),0,.9,.22,g);box(.3,.1,.6,seatM,0,.8,-.38,g);box(.25,.12,.3,MC(col),0,.78,-.9,g);
+ else if(ty===1){wheel(g,0,.8,.33,.14);wheel(g,0,-.8,.33,.14);box(.2,.28,.9,dark,0,.55,0,g);box(.3,.3,.4,finM,0,.42,.1,g);const tank=new T.Mesh(new T.SphereGeometry(.33,16,12),carPaint(col));tank.scale.set(.92,.7,1.08);tank.position.set(0,.9,.22);g.add(tank);box(.3,.1,.6,seatM,0,.8,-.38,g);const rearFender=new T.Mesh(new T.SphereGeometry(.22,12,8),carPaint(col));rearFender.scale.set(.9,.38,1.15);rearFender.position.set(0,.76,-.83);g.add(rearFender);
   const fk=cyl(.03,.8,0x9aa0a8,g,0,.75,.85);fk.rotation.x=-.25;box(.7,.04,.04,dark,0,1.14,.72,g);const ex=cyl(.05,.8,0xb0b4ba,g,.2,.38,-.45);ex.rotation.x=Math.PI/2;
   const tr=box(.4,.55,.26,jacket(col2),0,1.25,-.18,g);tr.rotation.x=.3;[-1,1].forEach(s=>{box(.12,.5,.14,dark,s*.16,.9,-.12,g);const ar=box(.09,.45,.1,jacket(col2),s*.22,1.2,.28,g);ar.rotation.x=1.1});
   const h=new T.Mesh(new T.SphereGeometry(.18,14,14),MC(col2));h.position.set(0,1.64,-.05);h.castShadow=true;g.add(h);box(.22,.08,.08,glass,0,1.64,.1,g);box(.04,.2,.38,MC(0xffffff),0,1.8,-.05,g);box(.14,.14,.08,hlm,0,.98,1.02,g);box(.14,.1,.06,tlm,0,.92,-1.1,g)}
  else if(ty===2){const k=busT(col);bx(g,new T.BoxGeometry(2.5,2.7,10),[k.L,k.R,k.roof,dark,k.front,k.rear],0,1.75,0);
   [-3.2,3.2].forEach(z=>[-1,1].forEach(a=>wheel(g,a*1.25,z,.5,.3)));[-1,1].forEach(a=>box(.12,.5,.2,dark,a*1.35,2.2,4.8,g));lights(g,2.5,.8,10)}
- else{const ct=cabT(col);bx(g,new T.BoxGeometry(2.4,2.2,2.6),[MC(col),MC(col),MC(col),dark,ct,MC(col)],0,1.6,3.7);box(2.5,2.5,7.2,cargoM(col2),0,1.95,-1.3,g);[3.7,-.5,-3.3].forEach(z=>[-1,1].forEach(a=>wheel(g,a*1.2,z,.5,.3)));lights(g,2.4,.8,11)}
+ else{const ct=cabT(col);bx(g,new T.BoxGeometry(2.4,2.2,2.6),[carPaint(col),carPaint(col),carPaint(col),dark,ct,carPaint(col)],0,1.6,3.7);box(2.5,2.5,7.2,cargoM(col2),0,1.95,-1.3,g);[3.7,-.5,-3.3].forEach(z=>[-1,1].forEach(a=>wheel(g,a*1.2,z,.5,.3)));lights(g,2.4,.8,11)}
  return g}
