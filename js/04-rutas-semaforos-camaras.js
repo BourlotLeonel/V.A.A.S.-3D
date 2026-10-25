@@ -10,9 +10,18 @@ APP.forEach(a=>a.mv.forEach(m=>m[1]=mk(m[1])));
 var PC={on:false,x:0,z:0};const STOP=64;let RNG=30;
 /* ---------- semáforos y cámaras (según las fotos) ---------- */
 const heads=[],CAMS=[],irMats=[];
+/* cabezal vial amarillo (igual al de la foto): cuerpo amarillo sin pantalla de fondo, 3 ópticas redondas con visera tubular corta y lente al fondo */
+const sYM=new T.MeshStandardMaterial({color:0xf0b400,roughness:.45,metalness:.2}),sKM=new T.MeshStandardMaterial({color:0x0b0c0e,roughness:.7,metalness:.1}),sVM=new T.MeshStandardMaterial({color:0xf0b400,roughness:.45,metalness:.2,side:T.DoubleSide});
 function head(x,y,z,face,a){const g=new T.Group();g.position.set(x,y,z);g.rotation.y=face;scene.add(g);
- box(.64,1.5,.06,bpM,0,0,-.2,g);box(.46,1.32,.36,headM,0,0,0,g);
- const L=[0xff2a2a,0xffc400,0x28e060].map((c,i)=>{const m=B(0x333333),s=new T.Mesh(new T.SphereGeometry(.15,14,14),m),yy=.43-i*.43;s.scale.z=.55;s.position.set(0,yy,.19);g.add(s);const r=new T.Mesh(new T.TorusGeometry(.16,.02,6,18),dkM);r.position.set(0,yy,.2);g.add(r);box(.34,.04,.22,dkM,0,yy+.19,.27,g);return{m,c}});
+ box(.44,1.4,.34,sYM,0,0,0,g);                                   /* cuerpo amarillo */
+ box(.5,.05,.4,sYM,0,.72,0,g);box(.5,.05,.4,sYM,0,-.72,0,g);     /* tapa superior e inferior */
+ box(.12,.2,.1,sYM,0,0,-.22,g);box(.07,.07,.14,sKM,0,.0,-.3,g);  /* soporte / abrazadera trasera */
+ const L=[0xff2a2a,0xffc400,0x28e060].map((c,i)=>{const yy=.45-i*.45,m=B(0x333333);
+  const hole=new T.Mesh(new T.CircleGeometry(.175,24),sKM);hole.position.set(0,yy,.171);g.add(hole);                    /* fondo negro de la óptica */
+  const v=new T.Mesh(new T.CylinderGeometry(.19,.19,.27,24,1,true),sVM);v.rotation.x=Math.PI/2;v.position.set(0,yy,.305);v.castShadow=true;g.add(v); /* visera tubular */
+  const r=new T.Mesh(new T.TorusGeometry(.19,.014,8,24),sYM);r.position.set(0,yy,.44);g.add(r);                         /* borde de la visera */
+  const s=new T.Mesh(new T.SphereGeometry(.15,18,18),m);s.scale.z=.45;s.position.set(0,yy,.2);g.add(s);               /* lente */
+  return{m,c}});
  g.userData.sem=a;heads.push({a,L});return g}
 function camModel(){const g=new T.Group(),pos=new Float32Array(CAM.v),cols={Material:0x7f868e,'Material.001':0xe8eaee,'Material.002':0x15181c,'Material.003':0x1b3b7c,'Material.004':0xff3030};
  for(const k in CAM.m){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(pos,3));geo.setIndex(CAM.m[k]);const n=geo.toNonIndexed();n.computeVertexNormals();
