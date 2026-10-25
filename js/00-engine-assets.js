@@ -4,7 +4,7 @@ const renderer=new T.WebGLRenderer({canvas:$('c'),antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputEncoding=T.sRGBEncoding;renderer.toneMapping=T.ACESFilmicToneMapping;
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
 const scene=new T.Scene(),camera=new T.PerspectiveCamera(50,1,1,700);
-const hemi=new T.HemisphereLight(0xffffff,0x556050,.6),sun=new T.DirectionalLight(0xffffff,1),fill=new T.DirectionalLight(0xd9e8ff,.16);
+const hemi=new T.HemisphereLight(0xffffff,0x556050,.68),sun=new T.DirectionalLight(0xffffff,1.15),fill=new T.DirectionalLight(0xd9e8ff,.22);
 sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-82,right:82,top:82,bottom:-82,near:.5,far:300});sun.shadow.bias=-.00015;sun.shadow.normalBias=.025;sun.shadow.radius=2;fill.position.set(-35,22,-28);scene.add(hemi,sun,fill);
 const M=(c,r=.9,m=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:m}),B=(c,o)=>new T.MeshBasicMaterial(Object.assign({color:c},o||{}));
 const PO={polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2};
