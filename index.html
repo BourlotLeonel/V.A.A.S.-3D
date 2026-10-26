@@ -1,29 +1,321 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Maqueta 3D – Semáforos inteligentes con cámara (V.A.A.S.)</title>
-<link rel="stylesheet" href="./css/styles.css"></head><body>
-<canvas id="c"></canvas>
-<div class="pn" id="top"><h1>Semáforos inteligentes · San Lorenzo / Próspero Bovino / 25 de Mayo</h1>
-<div id="clock">--:--</div><div class="row" id="scs"></div>
-<div class="row"><select id="spd"><option value="1">Velocidad x1</option><option value="0">Pausa</option><option value="2">x2</option><option value="4">x4</option><option value="8">x8</option></select>
-<button id="v1">Cenital</button><button id="v2">Esquina</button><button id="v3">Calle</button></div>
-<div class="row">Ver en 3D: <button id="m1" class="on">Con V.A.A.S.</button><button id="m2">Sin V.A.A.S. (30 s fijo)</button></div>
-<div class="row"><select id="dem"><option value="1">Demanda según documento</option><option value="1.5">Demanda ×1,5</option><option value="2">Demanda ×2</option></select><button id="bp">Solicitud peatonal</button><button id="bl">Cortar enlace V.A.A.S.</button></div>
-<div class="row"><label>Alcance de cámara <input type="range" id="rng" min="5" max="90" value="30"> <b id="rv">30 m</b></label></div>
-<div class="row">Cámaras: <button id="vc">Ver cámaras</button><button id="cv">Miniaturas</button><button id="vm0" class="on">Auto (IR de noche)</button><button id="vm1">Normal</button><button id="vm2">Infrarrojo</button></div>
-<div id="mode"></div></div>
-<div class="pn" id="side"><div id="cards"></div><table id="tb"></table><small id="tot" style="color:#93a0b2;display:block;margin-top:6px"></small></div>
-<div class="pn" id="feeds" style="display:none"></div>
-<div class="pn" id="cvw" style="display:none"><div class="row" id="cvt"></div><canvas id="cvc" width="640" height="360"></canvas><div class="row"><button id="cp">◀</button><button id="cn">▶</button><button id="cm0" class="on">Auto</button><button id="cm1">Visión normal</button><button id="cm2">Infrarrojo</button></div><div id="cvi" style="color:#93a0b2"></div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="./js/00-engine-assets.js"></script>
-<script src="./js/01-redes-viales-y-aceras.js"></script>
-<script src="./js/02-edificios.js"></script>
-<script src="./js/03-parque-y-plaza.js"></script>
-<script src="./js/04-rutas-semaforos-camaras.js"></script>
-<script src="./js/05-modelos-vehiculos.js"></script>
-<script src="./js/05b-modelos-vehiculos-externos.js"></script>
-<script src="./js/06-simulacion-y-control.js"></script>
-<script src="./js/07-estadisticas-y-camaras.js"></script>
-<script src="./js/08-controles-y-bucle.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>V.A.A.S. 3D · Suite de Simulación e Investigación</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+  <!-- ==================== HEADER PRINCIPAL ==================== -->
+  <header id="vaas-header">
+    <div class="header-brand">
+      <div class="traffic-leds" aria-hidden="true">
+        <span class="led red"></span>
+        <span class="led yellow"></span>
+        <span class="led green"></span>
+      </div>
+      <div class="brand-titles">
+        <strong>V.A.A.S.</strong>
+        <span>Alegre, Bourlot, Sanchez Paz, Spiazzi</span>
+      </div>
+    </div>
+
+    <nav class="header-tabs" aria-label="Cambiar vista">
+      <button type="button" id="tab-3d" class="tab-btn active" data-view="3d">
+        <span class="tab-dot green"></span>
+        Demo 3D
+      </button>
+      <button type="button" id="tab-2d" class="tab-btn" data-view="2d">
+        <span class="tab-dot cyan"></span>
+        Control y Gr&aacute;ficos
+      </button>
+    </nav>
+
+    <div class="header-status">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span id="header-clock">--:--</span>
+      </div>
+      <span id="header-mode-badge" class="badge-mode">Con V.A.A.S.</span>
+    </div>
+  </header>
+
+  <!-- ==================== LIENZO 3D (SIEMPRE ACTIVO) ==================== -->
+  <canvas id="c"></canvas>
+
+  <!-- ==================== PANTALLA 2D: CONTROL + GRÁFICOS ==================== -->
+  <main id="view-2d" aria-label="Panel de Control 3D y Gráficos de Investigación">
+    <div class="dashboard-container">
+
+      <!-- FILA 1: CONFIGURACIÓN DEL ENTORNO 3D + MONITOR 3D + ESTADO EN VIVO -->
+      <section class="dashboard-top-grid">
+
+        <!-- Panel original #top integrado como tarjeta de configuración 3D -->
+        <div class="pn card-panel" id="top">
+          <div class="panel-header-bar">
+            <span class="eyebrow">CONFIGURACIÓN DEL ENTORNO Y SIMULACIÓN 3D</span>
+            <h1>San Lorenzo / Próspero Bovino / 25 de Mayo</h1>
+          </div>
+
+          <div class="clock-banner">
+            <div>
+              <small>Reloj de simulación</small>
+              <div id="clock">--:--</div>
+            </div>
+            <div id="mode" class="mode-status-text"></div>
+          </div>
+
+          <div class="control-group">
+            <span class="group-label">Franjas horarias e iluminación 3D</span>
+            <div class="row" id="scs"></div>
+          </div>
+
+          <div class="control-group">
+            <span class="group-label">Velocidad y cámara del entorno 3D</span>
+            <div class="row">
+              <select id="spd">
+                <option value="1">Velocidad x1</option>
+                <option value="0">Pausa</option>
+                <option value="2">x2</option>
+                <option value="4">x4</option>
+                <option value="8">x8</option>
+              </select>
+              <button id="v1">Cenital</button>
+              <button id="v2">Esquina</button>
+              <button id="v3">Calle</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <span class="group-label">Escenario visualizado en el motor 3D</span>
+            <div class="row">
+              <button id="m1" class="on">Con V.A.A.S. (Adaptativo)</button>
+              <button id="m2">Sin V.A.A.S. (30 s fijo)</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <span class="group-label">Demanda vehicular y contingencia (Heartbeat)</span>
+            <div class="row">
+              <select id="dem">
+                <option value="1">Demanda según documento</option>
+                <option value="1.5">Demanda ×1,5</option>
+                <option value="2">Demanda ×2</option>
+              </select>
+              <button id="bp">Solicitud peatonal</button>
+              <button id="bl">Cortar enlace V.A.A.S.</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <span class="group-label">Sensores virtuales YOLO y visión de cámaras</span>
+            <div class="row">
+              <label class="range-label">
+                Alcance de cámara
+                <input type="range" id="rng" min="5" max="90" value="30">
+                <b id="rv">30 m</b>
+              </label>
+            </div>
+            <div class="row">
+              <button id="vc">Ver cámaras</button>
+              <button id="cv">Miniaturas</button>
+              <button id="vm0" class="on">Auto (IR de noche)</button>
+              <button id="vm1">Normal</button>
+              <button id="vm2">Infrarrojo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini-Monitor en vivo del Entorno 3D + Estado de Semáforos (#side) -->
+        <div class="pn card-panel" id="side">
+          <div class="panel-header-bar">
+            <span class="eyebrow">MONITOR 3D EN TIEMPO REAL Y TELEMETRÍA</span>
+            <div class="mini-preview-Header">
+              <h2>Vista Previa del Cruce y Comparación Dual</h2>
+              <button type="button" id="btn-go-3d" class="btn-accent-sm">Ampliar 3D ↗</button>
+            </div>
+          </div>
+
+          <!-- Espejo en tiempo real del canvas 3D para previsualizar cambios -->
+          <div class="preview-3d-wrapper">
+            <canvas id="preview-3d" width="480" height="220"></canvas>
+            <span class="preview-badge">Render 3D en vivo</span>
+          </div>
+
+          <div class="sub-label">Estado lumínico y detección por acceso</div>
+          <div id="cards"></div>
+
+          <div class="sub-label" style="margin-top:10px;">Tabla comparativa simultánea (3D)</div>
+          <table id="tb"></table>
+          <small id="tot" style="color:#93a0b2;display:block;margin-top:6px"></small>
+        </div>
+
+      </section>
+
+      <!-- FILA 2: CÁMARAS DE VISIÓN ARTIFICIAL (SE MUESTRAN AL ACTIVAR #vc O #cv) -->
+      <section class="cameras-section">
+        <div class="pn" id="feeds" style="display:none"></div>
+        <div class="pn" id="cvw" style="display:none">
+          <div class="row" id="cvt"></div>
+          <canvas id="cvc" width="640" height="360"></canvas>
+          <div class="row">
+            <button id="cp">◀</button>
+            <button id="cn">▶</button>
+            <button id="cm0" class="on">Auto</button>
+            <button id="cm1">Visión normal</button>
+            <button id="cm2">Infrarrojo</button>
+          </div>
+          <div id="cvi" style="color:#93a0b2"></div>
+        </div>
+      </section>
+
+      <!-- FILA 3: KPIs CIENTÍFICOS PARA LA INVESTIGACIÓN -->
+      <section class="research-section">
+        <div class="research-header">
+          <div>
+            <span class="eyebrow">ANALÍTICA E INVESTIGACIÓN · EJECUCIÓN SIMULTÁNEA</span>
+            <h2>Impacto en Movilidad, Eficiencia Operativa y Mitigación Ambiental</h2>
+          </div>
+          <div class="research-actions">
+            <button type="button" id="btn-reset-charts">Reiniciar historial gráfico</button>
+            <button type="button" id="btn-export-csv" class="btn-primary-vaas">Exportar Informe CSV</button>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-title">Ahorro de espera / vehículo</span>
+            <strong id="kpi-wait-saved" class="kpi-value positive">0,0 s</strong>
+            <small id="kpi-wait-pct">Comparando Con V.A.A.S. vs. 30 s fijo</small>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">Reducción de CO₂ en espera</span>
+            <strong id="kpi-co2-saved" class="kpi-value positive">0,000 kg</strong>
+            <small id="kpi-co2-pct">Emisiones evitadas al ralentí</small>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">Ahorro de combustible ocioso</span>
+            <strong id="kpi-fuel-saved" class="kpi-value positive">0,000 L</strong>
+            <small id="kpi-fuel-detail">Litros no consumidos en detención</small>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">Mitigación de cola y ruido (-dB)</span>
+            <strong id="kpi-queue-diff" class="kpi-value">0 veh</strong>
+            <small id="kpi-noise-est">Índice de fluidez acústica urbana</small>
+          </div>
+        </div>
+
+        <!-- GRILLA DE 4 GRÁFICOS DE INVESTIGACIÓN -->
+        <div class="charts-grid">
+
+          <!-- GRÁFICO 1: Evolución del Tiempo de Espera -->
+          <div class="chart-card">
+            <div class="chart-head">
+              <div>
+                <h3>1. Tiempo de Espera Medio por Vehículo (s/veh)</h3>
+                <p>Evolución temporal simultánea entre control adaptativo IA y ciclo fijo de 30 s</p>
+              </div>
+              <div class="chart-legend">
+                <span><i class="lg-vaas"></i>Con V.A.A.S.</span>
+                <span><i class="lg-fixed"></i>Sin V.A.A.S. (30 s)</span>
+              </div>
+            </div>
+            <div id="chart-wait-time" class="svg-chart-container"></div>
+          </div>
+
+          <!-- GRÁFICO 2: Evolución de Cola Detenida -->
+          <div class="chart-card">
+            <div class="chart-head">
+              <div>
+                <h3>2. Evolución de Cola Detenida y Congestión (vehículos)</h3>
+                <p>Acumulación de fila en las aproximaciones del cruce a lo largo de la sesión</p>
+              </div>
+              <div class="chart-legend">
+                <span><i class="lg-vaas"></i>Cola V.A.A.S.</span>
+                <span><i class="lg-fixed"></i>Cola Fijo 30 s</span>
+              </div>
+            </div>
+            <div id="chart-queue-time" class="svg-chart-container"></div>
+          </div>
+
+          <!-- GRÁFICO 3: Emisiones de CO2 y Combustible por Clase Vehicular -->
+          <div class="chart-card">
+            <div class="chart-head">
+              <div>
+                <h3>3. Emisiones de CO₂ Acumuladas en Ralentí (kg) y Desglose</h3>
+                <p>Cálculo EPA según tiempo detenido por tipo de vehículo (Auto, Moto, Colectivo, Camión)</p>
+              </div>
+              <span class="badge-epa">Factores EPA: Nafta 2,35 · Diésel 2,69 kg CO₂/L</span>
+            </div>
+            <div id="chart-co2-bars" class="svg-chart-container"></div>
+          </div>
+
+          <!-- GRÁFICO 4: Carga Vehicular y Estado por Acceso Vial -->
+          <div class="chart-card">
+            <div class="chart-head">
+              <div>
+                <h3>4. Densidad por Acceso Vial y Sensores YOLO</h3>
+                <p>Detección vehicular instantánea y estado de fase en los 4 accesos del cruce piloto</p>
+              </div>
+              <span id="chart-range-badge" class="badge-epa">Alcance: 30 m</span>
+            </div>
+            <div id="chart-approaches" class="svg-chart-container"></div>
+          </div>
+
+        </div>
+
+        <!-- PARÁMETROS AMBIENTALES EDITABLES (MODELO V.A.A.S. 2D) -->
+        <details class="emissions-config-box">
+          <summary>Configuración de supuestos ambientales y consumo al ralentí (Investigación)</summary>
+          <p class="emissions-help">
+            Fórmula: <code>CO₂ = horas de detención × consumo al ralentí (L/h) × factor de combustible (kg CO₂/L)</code>. Ajustá los parámetros para recalcular las curvas ambientales en vivo.
+          </p>
+          <div class="emissions-inputs-grid">
+            <label>
+              Auto · Nafta (L/h)
+              <input type="number" id="em-auto" min="0" max="10" step="0.05" value="0.80">
+            </label>
+            <label>
+              Moto · Nafta (L/h)
+              <input type="number" id="em-moto" min="0" max="10" step="0.05" value="0.25">
+            </label>
+            <label>
+              Colectivo · Diésel (L/h)
+              <input type="number" id="em-bus" min="0" max="10" step="0.05" value="2.50">
+            </label>
+            <label>
+              Camión · Diésel (L/h)
+              <input type="number" id="em-truck" min="0" max="10" step="0.05" value="3.00">
+            </label>
+            <label>
+              Motores encendidos (%)
+              <input type="number" id="em-engine-on" min="0" max="100" step="5" value="100">
+            </label>
+          </div>
+        </details>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==================== SCRIPTS ORIGINALES V.A.A.S. 3D ==================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="./js/00-engine-assets.js"></script>
+  <script src="./js/01-redes-viales-y-aceras.js"></script>
+  <script src="./js/02-edificios.js"></script>
+  <script src="./js/03-parque-y-plaza.js"></script>
+  <script src="./js/04-rutas-semaforos-camaras.js"></script>
+  <script src="./js/05-modelos-vehiculos.js"></script>
+  <script src="./js/05b-modelos-vehiculos-externos.js"></script>
+  <script src="./js/06-simulacion-y-control.js"></script>
+  <script src="./js/07-estadisticas-y-camaras.js"></script>
+  <script src="./js/08-controles-y-bucle.js"></script>
+
+  <!-- ==================== NUEVO MÓDULO DE GRÁFICOS Y SINCRONIZACIÓN ==================== -->
+  <script src="./js/09-graficos-investigacion.js"></script>
+</body>
+</html>
