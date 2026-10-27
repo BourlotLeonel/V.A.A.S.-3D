@@ -1,6 +1,6 @@
 /* ---------- vehículos ---------- */
-const TY=[{n:'Auto',L:4.9,W:2,H:1.55,vm:11.1,ac:2.6,w:.68,idle:.8,f:2.348},{n:'Moto',L:2.2,W:.8,H:1.6,vm:12.5,ac:3,w:.2,idle:.25,f:2.348},
- {n:'Colectivo',L:10,W:2.5,H:3.2,vm:9.7,ac:1.4,w:.08,idle:2.5,f:2.689},{n:'Camión',L:11,W:2.5,H:3.4,vm:8.3,ac:1,w:.04,idle:3,f:2.689}];
+const TY=[{n:'Auto',L:4.9,W:2,H:1.55,vm:11.1,ac:2.6,w:.68,idle:.8,f:2.348},{n:'Moto',L:1.85,W:.75,H:1.75,vm:12.5,ac:3,w:.2,idle:.25,f:2.348},
+ {n:'Colectivo',L:12,W:3,H:3,vm:9.7,ac:1.4,w:.08,idle:2.5,f:2.689},{n:'Camión',L:6.2,W:2.6,H:3,vm:8.3,ac:1,w:.04,idle:3,f:2.689}];
 const flake=ctex(64,64,(g,W,H)=>{g.fillStyle='#d8d8d8';g.fillRect(0,0,W,H);for(let i=0;i<900;i++){g.fillStyle=rnd()<.5?'rgba(255,255,255,.4)':'rgba(0,0,0,.28)';g.fillRect(rnd()*W,rnd()*H,1,1)}},3,3);
 const cmat={},EM=m=>{m.envMap=curEnv;envMats.push(m);return m};
 const MC=c=>cmat[c]||(cmat[c]=EM(new T.MeshPhysicalMaterial({color:c,roughness:.24,metalness:.42,map:flake,bumpMap:flake,bumpScale:.14,envMapIntensity:1.7,clearcoat:.78,clearcoatRoughness:.18})));

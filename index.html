@@ -5,8 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>V.A.A.S. 3D · Suite de Simulación e Investigación</title>
   <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/inicio.css?v=1">
 </head>
-<body>
+<body class="vaas-pending">
+<section id="vaas-start" aria-label="Inicio del simulador">
+ <div id="vaas-welcome" class="vaas-welcome">
+  <div>
+   <div class="vaas-identity"><span class="vaas-signal" aria-hidden="true"><i></i><i></i><i></i></span> V.A.A.S.</div>
+   <h1>Simulador de tránsito V.A.A.S.</h1>
+   <p class="vaas-lead">Visión Artificial Aplicada a Semáforos.<br>Explorá cómo la visión artificial puede adaptar los semáforos al tránsito de la ciudad.</p>
+   <div class="vaas-location"><strong>Una esquina real, distintas formas de circular.</strong>San Lorenzo · Próspero Bovino · 25 de Mayo</div>
+  </div>
+  <div class="vaas-config">
+   <h2>Prepará tu experiencia</h2><p>Elegí la calidad gráfica antes de entrar a la simulación.</p>
+   <label for="vaas-quality">Calidad de gráficos</label>
+   <select id="vaas-quality" aria-describedby="vaas-quality-description"><option value="off">Original</option><option value="suave" selected>Mejorado</option><option value="realista">Realista</option><option value="cine">Cinemático</option></select>
+   <p id="vaas-quality-description"></p>
+   <button id="vaas-go" type="button">Iniciar simulación <span aria-hidden="true">→</span></button>
+   <div class="vaas-footnote">Los recursos se cargarán al iniciar.<br>Podés cambiar la calidad más adelante.</div>
+  </div>
+ </div>
+ <div id="vaas-loading" class="vaas-loading" hidden>
+  <div class="vaas-spinner" aria-hidden="true"></div>
+  <h2 id="vaas-load-heading" tabindex="-1">Preparando la simulación</h2>
+  <p>Estamos cargando la ciudad, los vehículos y la vegetación.</p>
+  <progress id="vaas-progress" max="100" value="0" aria-label="Carga de la simulación"></progress>
+  <div class="vaas-progress-meta"><span id="vaas-load-stage" role="status">Preparando recursos…</span><span id="vaas-percent">0%</span></div>
+  <p id="vaas-resource-count"></p><p id="vaas-load-note">La primera carga puede tardar unos momentos.</p>
+  <p id="vaas-load-error" role="alert" hidden></p><button id="vaas-retry" type="button" hidden>Volver a intentar</button>
+ </div>
+</section>
+<noscript><style>#vaas-welcome{display:none!important}</style><p style="position:fixed;z-index:100001;color:white;padding:30px">Activá JavaScript para usar el simulador.</p></noscript>
+
 
   <!-- ==================== HEADER PRINCIPAL ==================== -->
   <header id="vaas-header">
@@ -301,21 +331,41 @@
     </div>
   </main>
 
-  <!-- ==================== SCRIPTS ORIGINALES V.A.A.S. 3D ==================== -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="./js/00-engine-assets.js"></script>
-  <script src="./js/01-redes-viales-y-aceras.js"></script>
-  <script src="./js/02-edificios.js"></script>
-  <script src="./js/03-parque-y-plaza.js"></script>
-  <script src="./js/04-rutas-semaforos-camaras.js"></script>
-  <script src="./js/05-modelos-vehiculos.js"></script>
-  <script src="./js/05b-modelos-vehiculos-externos.js"></script>
-  <script src="./js/06-simulacion-y-control.js"></script>
-  <script src="./js/07-estadisticas-y-camaras.js"></script>
-  <script src="./js/08-controles-y-bucle.js"></script>
-
-  <!-- ==================== NUEVO MÓDULO DE GRÁFICOS Y SINCRONIZACIÓN ==================== -->
-  <script src="./js/09-graficos-investigacion.js"></script>
+  <script type="application/json" id="vaas-script-manifest">
+[
+  "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js",
+  "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js",
+  "./js/00-engine-assets.js?v=asfalto-fino-5",
+  "./js/01-redes-viales-y-aceras.js?v=terreno-extenso-8",
+  "./js/02-edificios.js?v=luces-suaves-4",
+  "./js/02b-esquina-lava-todo.js?v=2",
+  "./js/02c-comercios-ochavas.js?v=1",
+  "./js/02d-casas-y-repuestos.js?v=1",
+  "./js/03-parque-y-plaza.js?v=luces-suaves-4",
+  "./js/03a-franjas-verdes-veredas.js?v=1",
+  "./js/04-rutas-semaforos-camaras.js?v=zonas-sutiles-8",
+  "./js/04b-relieve-25-de-mayo.js?v=final-bajada-3",
+  "./js/04c-nubes-y-hierba.js?v=relieve-pasto-2",
+  "./js/04e-cielo-atmosferico.js?v=azul-2",
+  "./js/04f-tonos-vegetacion.js?v=1",
+  "./js/04g-entorno-periferico.js?v=3",
+  "./js/05-modelos-vehiculos.js?v=proporciones-5",
+  "./js/05b-modelos-vehiculos-externos.js?v=colores-6",
+  "./js/05c-motos-externas.js?v=proporciones-5",
+  "./js/05d-colectivos-externos.js?v=ejes-reales-8",
+  "./js/05e-camiones-externos.js?v=proporciones-5",
+  "./js/05f-luces-vehiculos.js?v=1",
+  "./js/06-simulacion-y-control.js?v=luces-suaves-13",
+  "./js/07-estadisticas-y-camaras.js",
+  "./js/07a-vegetacion-graficos.js?v=tamanos-variados-4",
+  "./js/07b-posprocesado.js?v=lente-vineta-8",
+  "./js/07c-recorte-camara.js?v=1",
+  "./js/08-controles-y-bucle.js?v=inicio-7",
+  "./js/08b-texturas-graficos.js?v=fondo-ligero-4",
+  "./js/08c-paredes-detalladas.js?v=grano-2",
+  "./js/09-graficos-investigacion.js?v=inicio-1"
+]
+  </script>
+  <script src="./js/inicio.js?v=1"></script>
 </body>
 </html>

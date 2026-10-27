@@ -9,11 +9,33 @@ sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.c
 const M=(c,r=.9,m=0)=>new T.MeshStandardMaterial({color:c,roughness:r,metalness:m}),B=(c,o)=>new T.MeshBasicMaterial(Object.assign({color:c},o||{}));
 const PO={polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2};
 function box(w,h,d,m,x,y,z,p){const o=new T.Mesh(new T.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;(p||scene).add(o);return o}
-function blockSidewalk(sx,sz){const r=4.64,wide=sz>0?5.9:3,farX=sz>0?68.9:66,farZ=70.895;const s=new T.Shape();s.moveTo(r,0);s.lineTo(farX,0);s.lineTo(farX,3);s.lineTo(wide,3);s.lineTo(wide,farZ);s.lineTo(0,farZ);s.lineTo(0,r);s.absarc(r,r,r,Math.PI,Math.PI*1.5,false);s.closePath();const g=new T.ExtrudeGeometry(s,{depth:.2,bevelEnabled:false,steps:1}),mat=sw.clone(),edge=new T.MeshStandardMaterial({color:0xb8b5aa,roughness:.96});if(sw.map){mat.map=sw.map.clone();mat.map.repeat.set(.5,.5);mat.map.needsUpdate=true}mat.side=edge.side=T.DoubleSide;const m=new T.Mesh(g,[edge,mat]);m.scale.x=sx;m.rotation.x=sz>0?Math.PI/2:-Math.PI/2;m.position.set(sx*(sz>0?3.9:6.795),sz>0?.228:.028,sz*9.105);m.receiveShadow=true;scene.add(m);return m}
-function cornerAsphaltPatch(sx,sz){const r=4.64,s=new T.Shape();s.moveTo(0,0);s.lineTo(r,0);s.absarc(r,r,r,-Math.PI/2,-Math.PI,true);s.lineTo(0,0);const map=asphaltTex.clone();map.repeat.set(.1,.1);map.needsUpdate=true;const m=new T.Mesh(new T.ShapeGeometry(s,48),new T.MeshStandardMaterial({roughness:.92,map,side:T.DoubleSide}));m.scale.x=sx;m.rotation.x=sz>0?Math.PI/2:-Math.PI/2;m.position.set(sx*(sz>0?3.9:6.795),.026,sz*9.105);m.receiveShadow=true;scene.add(m);return m}
+function blockSidewalk(sx,sz){const r=4.64,wide=sz>0?5.9:3,farX=sz>0?68.9:66,farZ=70.895;const s=new T.Shape();s.moveTo(r,0);s.lineTo(farX,0);s.lineTo(farX,3);s.lineTo(wide,3);s.lineTo(wide,farZ);s.lineTo(0,farZ);s.lineTo(0,r);s.absarc(r,r,r,Math.PI,Math.PI*1.5,false);s.closePath();const g=new T.ExtrudeGeometry(s,{depth:.2,bevelEnabled:false,steps:1,curveSegments:48}),mat=sw.clone(),edge=new T.MeshStandardMaterial({color:0xb8b5aa,roughness:.96});if(sw.map){mat.map=sw.map.clone();mat.map.repeat.set(.3125,.3125);mat.map.needsUpdate=true}mat.side=edge.side=T.DoubleSide;const m=new T.Mesh(g,[mat,edge]);
+ const curbMat=new T.MeshStandardMaterial({color:0xf0eee5,roughness:.95,side:T.DoubleSide});
+ // Banda de 12 cm sobre la arista exterior y cara vertical blanca del cordón.
+ const path=[[farX,0],[r,0]];
+ for(let i=1;i<=48;i++){const a=-Math.PI/2-i*Math.PI/96;path.push([r+r*Math.cos(a),r+r*Math.sin(a)])}
+ path.push([0,farZ]);
+ const positions=[],indices=[];
+ for(let i=0;i<path.length;i++){
+  const [x,y]=path[i];let nx=0,ny=1;
+  if(i>1&&i<50){const a=-Math.PI/2-(i-1)*Math.PI/96;nx=-Math.cos(a);ny=-Math.sin(a)}
+  else if(i>=50){nx=1;ny=0}
+  // En la primera/última tangente la normal apunta hacia la vereda.
+  if(i===49){nx=1;ny=0}
+  positions.push(x,y,sz>0?-.004:.204,x+nx*.12,y+ny*.12,sz>0?-.004:.204);
+  if(i){const k=i*2;indices.push(k-2,k-1,k,k-1,k+1,k)}
+ }
+ const bandGeo=new T.BufferGeometry();bandGeo.setAttribute('position',new T.Float32BufferAttribute(positions,3));bandGeo.setIndex(indices);bandGeo.computeVertexNormals();
+ const band=new T.Mesh(bandGeo,curbMat);band.name='Trazo blanco del cordón';band.receiveShadow=true;m.add(band);
+ // El material lateral corresponde al canto exterior de la vereda.
+ edge.color.setHex(0xe9e7de);
+ m.scale.x=sx;m.rotation.x=sz>0?Math.PI/2:-Math.PI/2;m.position.set(sx*(sz>0?3.9:6.795),sz>0?.228:.028,sz*9.105);m.receiveShadow=true;scene.add(m);scene.attach(band);return m}
+/* Base continua bajo el cordón: 8 cm de solape cierran las juntas con ambas calles. */
+function cornerAsphaltPatch(sx,sz){const r=4.64,map=asphaltTex.clone();map.repeat.set(.2,.2);map.needsUpdate=true;const m=new T.Mesh(new T.PlaneGeometry(r+.16,r+.16).translate(r/2,r/2,0),new T.MeshStandardMaterial({roughness:.92,map,side:T.DoubleSide}));m.scale.x=sx;m.rotation.x=sz>0?Math.PI/2:-Math.PI/2;m.position.set(sx*(sz>0?3.9:6.795),.026,sz*9.105);m.receiveShadow=true;scene.add(m);return m}
 function cyl(r,h,c,p,x,y,z,rx){const o=new T.Mesh(new T.CylinderGeometry(r,r,h,12),new T.MeshStandardMaterial({color:c,roughness:.55,metalness:.45,map:streak}));o.position.set(x,y,z);if(rx)o.rotation.x=rx;o.castShadow=true;(p||scene).add(o);return o}
 function plane(w,d,m,x,y,z){const o=new T.Mesh(new T.PlaneGeometry(w,d),m);o.rotation.x=-Math.PI/2;o.position.set(x,y,z);o.receiveShadow=true;scene.add(o);return o}
-function ctex(w,h,draw,rx,ry){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(rx||1,ry||1);t.encoding=T.sRGBEncoding;t.anisotropy=4;return t}
+const fuentesTexturas=new WeakMap();
+function ctex(w,h,draw,rx,ry){const c=document.createElement('canvas');c.width=w;c.height=h;fuentesTexturas.set(c,{w,h,draw,seed0,textureSeed});draw(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(rx||1,ry||1);t.encoding=T.sRGBEncoding;t.anisotropy=4;return t}
 let seed0=7;const rnd=()=>(seed0=(seed0*16807)%2147483647)/2147483647;let textureSeed=9371;const texRnd=()=>(textureSeed=(textureSeed*16807)%2147483647)/2147483647;
 const commonGrassTexture=ctex(128,128,(g,W,H)=>{g.fillStyle='#52773b';g.fillRect(0,0,W,H);for(let i=2800;i--;){const x=texRnd()*W,y=texRnd()*H;g.strokeStyle=texRnd()<.52?'rgba(143,177,91,.55)':'rgba(34,75,37,.55)';g.lineWidth=.5+texRnd();g.beginPath();g.moveTo(x,y);g.lineTo(x+(texRnd()-.5)*3,y-2-texRnd()*6);g.stroke()}for(let i=90;i--;){g.fillStyle=texRnd()<.5?'rgba(188,169,92,.18)':'rgba(28,61,33,.2)';g.beginPath();g.arc(texRnd()*W,texRnd()*H,1+texRnd()*3,0,6.28);g.fill()}});
 function grassMap(rx,ry){const t=commonGrassTexture.clone();t.repeat.set(rx,ry);t.needsUpdate=true;return t}
@@ -24,3 +46,15 @@ function envCube(top,hor,bot){const mk=fn=>{const c=document.createElement('canv
  const side=()=>mk(g=>{const q=g.createLinearGradient(0,0,0,64);q.addColorStop(0,top);q.addColorStop(.5,hor);q.addColorStop(.52,bot);q.addColorStop(1,bot);g.fillStyle=q;g.fillRect(0,0,64,64)});
  const up=mk(g=>{g.fillStyle=top;g.fillRect(0,0,64,64)}),dn=mk(g=>{g.fillStyle=bot;g.fillRect(0,0,64,64)});const ct=new T.CubeTexture([side(),side(),up,dn,side(),side()]);ct.encoding=T.sRGBEncoding;ct.needsUpdate=true;return ct}
 const envDay=envCube('#7fb2e0','#dfeaf2','#5a5f58'),envNight=envCube('#05080f','#10182a','#07080a'),envMats=[];let curEnv=envDay;
+
+/* Medidas físicas en metros, compartidas por el modelo y el tráfico. */
+const actoresVehiculos=new WeakMap();
+function aplicarDimensionesVehiculo(grupo,dimensiones){
+ grupo.userData.dimensiones=dimensiones;
+ const actor=actoresVehiculos.get(grupo);
+ if(actor){actor.len=dimensiones.L;actor.tw=dimensiones.W;actor.th=dimensiones.H}
+}
+function registrarActorVehiculo(grupo,actor){
+ actoresVehiculos.set(grupo,actor);
+ if(grupo.userData.dimensiones)aplicarDimensionesVehiculo(grupo,grupo.userData.dimensiones);
+}

@@ -501,6 +501,6 @@
     requestAnimationFrame(syncLoop);
   }
 
-  setInterval(updateResearchDashboard, 600);
-  requestAnimationFrame(syncLoop);
+  window.iniciarPanelVAAS=()=>{setInterval(updateResearchDashboard,600);requestAnimationFrame(syncLoop)};
+  if(!window.vaasInicio)window.iniciarPanelVAAS();
 })();

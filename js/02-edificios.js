@@ -68,7 +68,7 @@ function bld2(px,pz,fx,fz,W,D){const g=new T.Group();g.position.set(px,.225,pz);
  else{H=3.3;mk(W,H,[bm(D,H),bm(D,H),gy,gy,bm(W,H),bm(D,H)]);box(W+.2,.4,D+.2,M(0xcfcac0),0,H+.2,0,g);[-1,1].forEach(s=>{box(1.9,1.4,.08,M(0xece9df),s*W*.27,1.8,D/2+.05,g);box(1.7,1.2,.1,gl,s*W*.27,1.8,D/2+.09,g)});box(1.1,2.2,.1,M(0x5a3a22),0,1.1,D/2+.06,g)}
  box(bw+1.4,.9,.2,k<.38?M(0xcfcac0):bm(bw+1.4,.9),0,.45,D/2+3.2,g);box(bw+1.4,.7,.05,ironM,0,1.3,D/2+3.2,g);box(bw+1.4,.05,3.2,grassY,0,.03,D/2+1.6,g);box(1.4,1.5,.06,ironM,bw*.32,.75,D/2+3.2,g);g.userData.pop={t:k<.38?'Edificio de oficinas y locales':k<.78?'Casa de dos plantas, techo de tejas':'Casa de ladrillo a la vista',r:[['Altura aprox.',H.toFixed(1)+' m'],['Frente',bw.toFixed(1)+' m']]};_BX.push([g,bw,D,3.6]);return g}
 const _BX=[];function _shp(a,b,c,d,W,D){const n=SIGNS[(rnd()*SIGNS.length)|0],g=bld(a,b,c,d,W,D,'shop',{name:n});g.userData.pop={t:'Comercio',r:[['Cartel',n]]};_BX.push([g,W,D,.6]);return g}
-function _extra(g,n){g.userData.pop={t:'Comercio',r:[['Cartel',n]]};_BX.push([g,9,9,.6]);if(n==='PANADERÍA BIZCALL'){const s=new T.Mesh(new T.PlaneGeometry(3.7,2.9),_mt({map:_tc(stoneT,2.4,2.6)}));s.position.set(2.6,1.55,4.53);s.receiveShadow=true;g.add(s)}
+function _extra(g,n){g.userData.pop={t:'Comercio',r:[['Cartel',n]]};_BX.push([g,9,9,.6]);if(n==='PANADERÍA BIZCAL'){const s=new T.Mesh(new T.PlaneGeometry(3.7,2.9),_mt({map:_tc(stoneT,2.4,2.6)}));s.position.set(2.6,1.55,4.53);s.receiveShadow=true;g.add(s)}
 }
 {const placeAt=(cx,cz,fx,fz,W,D,sb)=>[cx+fx*(6.5-sb-D/2),cz+fz*(6.5-sb-D/2)];
  for(const sx of[-1,1])for(const sz of[-1,1])for(let i=0;i<5;i++)for(let j=0;j<5;j++){
@@ -77,9 +77,10 @@ function _extra(g,n){g.userData.pop={t:'Comercio',r:[['Cartel',n]]};_BX.push([g,
   const shop=(j===0||i===0)&&rnd()<.55,W=8+rnd()*2.5,D=shop?9+rnd()*2:8+rnd()*2.5,sb=shop?1.7:(fx?3.5:3.5),[px,pz]=placeAt(cx,cz,fx,fz,W,D,sb);
   shop?_shp(px,pz,fx,fz,W,D):bld2(px,pz,fx,fz,W,D);
   if(!shop&&rnd()<.4)tree(px+fx*(D/2+3)+(fz?1:0)*(W/2+1.8),pz+fz*(D/2+3)+(fx?1:0)*(W/2+1.8))}
- [[1,1,'#e8c030','BLOCK','#7a3b1f'],[-1,-1,'#e9dfc2','PANADERÍA BIZCALL','#8a3b4f'],[-1,1,'#1b1b1d','DECO MILLON','#d13a8a']].forEach(([sx,sz,w,n,sc])=>_extra(bld(sx*14.3,sz*16.6,0,-sz,9,9,'shop',{name:n,wall:w,sign:sc,parapet:0x444444,aw1:sc}),n))}
+ [[1,1,'#e8c030','BLOCK','#7a3b1f'],[-1,-1,'#e9dfc2','PANADERÍA BIZCAL','#8a3b4f'],[-1,1,'#1b1b1d','DECOTILLON','#d13a8a']].forEach(([sx,sz,w,n,sc])=>_extra(bld(sx*14.3,sz*16.6,0,-sz,9,9,'shop',{name:n,wall:w,sign:sc,parapet:0x444444,aw1:sc}),n))}
 const palmLeafMat=leafMats[1].clone();palmLeafMat.side=T.DoubleSide;const palmRibMat=leafMats[1];
 function palmCrown(g,y,count,length){
+ g.userData.vegetacion='palmera';
  const pos=[],col=[],idx=[],ribs=[];
  for(let f=0;f<count;f++){
   const a=f/count*Math.PI*2+(rnd()-.5)*.12,dx=Math.cos(a),dz=Math.sin(a),sx=-dz,sz=dx,L=length*(.9+rnd()*.2),drop=length*(.25+rnd()*.12);
@@ -99,14 +100,14 @@ function palmCrown(g,y,count,length){
  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setAttribute('color',new T.Float32BufferAttribute(col,3));geo.setIndex(idx);geo.computeVertexNormals();const leaves=new T.Mesh(geo,palmLeafMat);leaves.castShadow=true;g.add(leaves);
  for(const points of ribs){const curve=new T.CatmullRomCurve3(points),rachis=new T.Mesh(new T.TubeGeometry(curve,20,.032,6,false),palmRibMat);g.add(rachis)}
 }
-function tree(x,z){const g=new T.Group();g.position.set(x,.2,z);const trunk=new T.Mesh(new T.CylinderGeometry(.13,.25,3.1,9),barkMat);trunk.position.y=1.55;trunk.castShadow=true;g.add(trunk);
+function tree(x,z){const g=new T.Group();g.userData.vegetacion='arbol';g.position.set(x,.2,z);const trunk=new T.Mesh(new T.CylinderGeometry(.13,.25,3.1,9),barkMat);trunk.position.y=1.55;trunk.castShadow=true;g.add(trunk);
  // Copa formada por masas superpuestas y descentradas, no por una torre de bolas.
  for(let i=0;i<7;i++){const a=i*2.399+(rnd()-.5)*.22,r=i===0?0:.48+rnd()*.2,s=new T.Mesh(leafGeo,leafMats[(rnd()*leafMats.length)|0]);s.scale.set(1.3+rnd()*.3,1.45+rnd()*.25,1.28+rnd()*.3);s.position.set(Math.cos(a)*r,4.25+(rnd()-.5)*.5,Math.sin(a)*r);s.rotation.set(rnd()*Math.PI,rnd()*Math.PI,rnd()*Math.PI);s.castShadow=true;g.add(s)}scene.add(g)}
 for(let k=0;k<6;k++){for(const sg of[-1,1]){const d=22+k*8;tree(sg*d,10.2);tree(sg*d+4,-10.2);if(sg<0)tree(-7.8,-d);else tree(5.2,d)}}
 for(const x of[-62,-38,-22,22,38,62]){cyl(.14,9,0x6b5a47,null,x,4.7,-10.2);box(2.2,.15,.15,M(0x5a4a38),x,8.6,-10.2)}
 const lamps=[],lampBulb=B(0xffe9a8),nightLamps=[],lampGlows=[];
-const lampGlowTex=ctex(128,128,(g,W,H)=>{const q=g.createRadialGradient(W/2,H/2,2,W/2,H/2,W*.48);q.addColorStop(0,'rgba(255,232,180,.9)');q.addColorStop(.18,'rgba(255,190,100,.55)');q.addColorStop(.55,'rgba(255,145,55,.16)');q.addColorStop(1,'rgba(255,130,40,0)');g.fillStyle=q;g.fillRect(0,0,W,H)});
-function addNightLamp(x,y,z,size=4.5){const l=new T.PointLight(0xffc477,0,26,2);l.position.set(x,y,z);scene.add(l);nightLamps.push(l);const glow=new T.Sprite(new T.SpriteMaterial({map:lampGlowTex,color:0xffc477,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false}));glow.position.set(x,y,z);glow.scale.set(size,size,1);scene.add(glow);lampGlows.push(glow)}
+const lampGlowTex=ctex(128,128,(g,W,H)=>{const q=g.createRadialGradient(W/2,H/2,2,W/2,H/2,W*.48);q.addColorStop(0,'rgba(255,232,180,.9)');q.addColorStop(.18,'rgba(255,215,166,.32)');q.addColorStop(.55,'rgba(255,202,148,.07)');q.addColorStop(1,'rgba(255,130,40,0)');g.fillStyle=q;g.fillRect(0,0,W,H)});
+function addNightLamp(x,y,z,size=4.5){const l=new T.SpotLight(0xffddb5,0,42,1.28,1,1.7);l.position.set(x,y,z);l.target.position.set(x,0,z);scene.add(l,l.target);nightLamps.push(l);const glow=new T.Sprite(new T.SpriteMaterial({map:lampGlowTex,color:0xffc477,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false}));glow.position.set(x,y,z);glow.scale.set(size*1.5,size*1.5,1);scene.add(glow);lampGlows.push(glow)}
 function cityStreetLight(x,z){cyl(.09,9,0x6a6e74,null,x,4.5,z);for(const side of[-1,1]){cyl(.05,2.6,0x6a6e74,null,x,8.9,z+side*1.3,Math.PI/2);const head=new T.Mesh(new T.BoxGeometry(.9,.14,.4),M(0x3e454a,.42,.55));head.position.set(x,8.9,z+side*2.6);scene.add(head);const bulb=new T.Mesh(new T.BoxGeometry(.72,.055,.26),lampBulb);bulb.position.set(x,8.8,z+side*2.6);scene.add(bulb)}addNightLamp(x,8.6,z,5)}
 // Alternadas con los árboles de las veredas para dejar libre la copa y el tronco.
-[[-26,10.2],[-42,10.2],[26,10.2],[42,10.2],[-22,-10.2],[-38,-10.2],[30,-10.2],[46,-10.2]].forEach(([x,z])=>{cityStreetLight(x,z);const g=new T.Mesh(new T.CircleGeometry(9,24),B(0xffd890,Object.assign({transparent:true,opacity:0,depthWrite:false},PO)));g.rotation.x=-Math.PI/2;g.position.set(x,.3,z);scene.add(g);lamps.push(g)});
+[[-26,10.2],[-42,10.2],[26,10.2],[42,10.2],[-22,-10.2],[-38,-10.2],[30,-10.2],[46,-10.2]].forEach(([x,z])=>{cityStreetLight(x,z);const g=new T.Mesh(new T.CircleGeometry(12,32),B(0xffdfb8,Object.assign({map:lampGlowTex,transparent:true,opacity:0,depthWrite:false},PO)));g.rotation.x=-Math.PI/2;g.position.set(x,.3,z);scene.add(g);lamps.push(g)});
