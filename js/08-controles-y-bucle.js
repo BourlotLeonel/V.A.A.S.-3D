@@ -87,8 +87,7 @@ function _drive(dt,f,r){const d=DC;
 const _bc=document.createElement('button');_bc.textContent='🚗 Manejar un auto';
 _bc.onclick=()=>{if(_PL.on)_bt.click();_DR.on=!_DR.on;PC.on=_DR.on;if(_DR.on){Object.assign(DC,{x:-35,z:2.6,h:Math.PI/2,v:0,st:0});for(let i=0;i<8&&_hit(DC.x,DC.z,DC.h);i++)DC.x-=7;_cg.visible=true;_hud.style.display='block';ph=1.2;R0=9;_bc.textContent='🚗 Bajar del auto';_bc.classList.add('on')}else{_cg.visible=false;_hud.style.display='none';_bc.textContent='🚗 Manejar un auto';_bc.classList.remove('on');R0=Math.max(R0,25);ph=Math.min(ph,1.2);view()}_bc.blur()};
 _bt.after(_bc);
-let last=performance.now(),fa=0,ha=0,fi=0,va=0;
-function loop(n){requestAnimationFrame(loop);const dt=Math.min((n-last)/1000,.1);last=n;let r=dt*speed;while(r>0){const d=Math.min(r,.1);simT+=d;const b=arrivals(d);sD.step(d,b);sF.step(d,b);r-=d}
+let last=performance.now(),lastRender=0,fa=0,ha=0,fi=0,va=0;function loop(n){requestAnimationFrame(loop);if(document.hidden){last=n;lastRender=n;return}if(n-lastRender<(window.mobileGraphics?1000/30:1000/60))return;lastRender=n;const dt=Math.min((n-last)/1000,.1);last=n;let r=dt*speed;while(r>0){const d=Math.min(r,.1);simT+=d;const b=arrivals(d);sD.step(d,b);sF.step(d,b);r-=d}
  ha+=dt;if(ha>.25){ha=0;hud()}fa+=dt;if(fa>.18){fa=0;if(showFeeds)feed(fi++%CAMS.length)}if(vopen){va+=dt;if(va>.09){va=0;viewer()}}graficos.render()}
 window.iniciarBucleVAAS=()=>{last=performance.now();requestAnimationFrame(loop)};
 if(!window.vaasInicio)window.iniciarBucleVAAS();

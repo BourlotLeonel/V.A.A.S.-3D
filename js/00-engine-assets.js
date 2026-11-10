@@ -2,7 +2,7 @@ const CAM={"v":[0.116,1.526,8.761,0.11,1.527,8.761,0.105,1.529,8.761,0.099,1.531
 const T=THREE,$=id=>document.getElementById(id);
 const renderer=new T.WebGLRenderer({canvas:$('c'),antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputEncoding=T.sRGBEncoding;renderer.toneMapping=T.ACESFilmicToneMapping;
-renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
+window.deviceGraphicsQuery=window.matchMedia('(max-width: 768px), (pointer: coarse)');window.mobileGraphics=window.deviceGraphicsQuery.matches;window.applyDeviceGraphics=()=>{window.mobileGraphics=window.deviceGraphicsQuery.matches;renderer.setPixelRatio(window.mobileGraphics?Math.min(window.devicePixelRatio||1,1.25):1);renderer.shadowMap.enabled=!window.mobileGraphics};window.applyDeviceGraphics();if(window.deviceGraphicsQuery.addEventListener)window.deviceGraphicsQuery.addEventListener('change',window.applyDeviceGraphics);else window.deviceGraphicsQuery.addListener(window.applyDeviceGraphics);renderer.shadowMap.type=T.PCFSoftShadowMap;
 const scene=new T.Scene(),camera=new T.PerspectiveCamera(50,1,1,700);
 const hemi=new T.HemisphereLight(0xffffff,0x556050,.68),sun=new T.DirectionalLight(0xffffff,1.15),fill=new T.DirectionalLight(0xd9e8ff,.22);
 sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-82,right:82,top:82,bottom:-82,near:.5,far:300});sun.shadow.bias=-.00015;sun.shadow.normalBias=.025;sun.shadow.radius=2;fill.position.set(-35,22,-28);scene.add(hemi,sun,fill);

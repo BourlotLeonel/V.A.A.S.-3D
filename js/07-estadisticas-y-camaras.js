@@ -22,16 +22,8 @@ function feed(i){const c=CAMS[i],night=(vmode==='ir'||(vmode==='auto'&&sc.night)
  S.cars.filter(o=>o.a===c.a&&o.s>STOP-RNG&&o.s<STOP+1).forEach(o=>{v3.set(o.x,o.th,o.z).project(c.vc);const x=(v3.x+1)/2*320,y=(1-v3.y)/2*180;v3.set(o.x,0,o.z).project(c.vc);const h=Math.abs((1-v3.y)/2*180-y)+2,w=h*Math.max(.7,o.tw/o.th*1.6);g.strokeRect(x-w/2,y,w,h)});
  $('fl'+i).textContent=`CAM ${i+1} · ${APP[c.a].n} · ${night?'INFRARROJO':'VISIÓN NORMAL'} · ${S.queue(c.a)} en zona`}
 /* ---------- visor de una cámara a la vez ---------- */
-const rt2=new T.WebGLRenderTarget(640,360),buf2=new Uint8Array(640*360*4),img2=new ImageData(640,360),cvc=$('cvc').getContext('2d');let vi=0,vopen=false;
-function viewer(){const c=CAMS[vi],ir=(vmode==='ir'||(vmode==='auto'&&sc.night)),W=640,H=360;renderer.setRenderTarget(rt2);renderer.render(scene,c.vc);renderer.readRenderTargetPixels(rt2,0,0,W,H,buf2);renderer.setRenderTarget(null);
- const gain=ir?(sc.night?2.2:1.15):1,dd=img2.data;
- for(let y=0;y<H;y++){let s=(H-1-y)*W*4,d=y*W*4;for(let x=0;x<W;x++,s+=4,d+=4){if(ir){const l=buf2[s]*.3+buf2[s+1]*.59+buf2[s+2]*.11,v=Math.min(255,LUT[l|0]*gain+Math.random()*(sc.night?16:6));dd[d]=dd[d+1]=dd[d+2]=v}else{dd[d]=LUT[buf2[s]];dd[d+1]=LUT[buf2[s+1]];dd[d+2]=LUT[buf2[s+2]]}dd[d+3]=255}}
- const g=cvc;g.putImageData(img2,0,0);g.lineWidth=2;g.font='bold 12px sans-serif';let n=0,st=0;
- S.cars.filter(o=>o.a===c.a&&o.s>STOP-RNG&&o.s<STOP+1).forEach(o=>{n++;const stop=o.v<.5;if(stop)st++;v3.set(o.x,o.th,o.z).project(c.vc);const x=(v3.x+1)/2*W,y=(1-v3.y)/2*H;v3.set(o.x,0,o.z).project(c.vc);const h=Math.abs((1-v3.y)/2*H-y)+3,w=h*Math.max(.7,o.tw/o.th*1.6);g.strokeStyle=g.fillStyle=stop?'#ff5a5a':'#ffd400';g.strokeRect(x-w/2,y,w,h);g.fillText(TY[o.ty].n,x-w/2,y-3)});
- g.fillStyle='#fff';g.font='bold 14px sans-serif';g.fillText(`CAM ${vi+1} · ${APP[c.a].n}`,10,20);g.fillStyle=ir?'#9cff9c':'#fff';g.fillText(ir?'● INFRARROJO':'● VISIÓN NORMAL',10,40);
- g.fillStyle='#ff4040';g.beginPath();g.arc(W-24,18,6,0,6.3);g.fill();g.fillStyle='#fff';g.fillText('REC',W-58,23);
- $('cvi').textContent=`Detectados en la zona de ${RNG} m: ${n} vehículo(s) · ${st} detenido(s) · semáforo ${({r:'ROJO',y:'AMARILLO',g:'VERDE',p:'AMARILLO'})[S.sig(c.a)]}`}
-function tabs(){[...$('cvt').children].forEach((b,i)=>b.classList.toggle('on',i===vi))}
+let vi=0,vopen=false;
+function viewer(){}function tabs(){[...$('cvt').children].forEach((b,i)=>b.classList.toggle('on',i===vi))}
 $('cvt').innerHTML=CAMS.map((c,i)=>`<button data-i="${i}">Cámara ${i+1} · ${APP[c.a].n}</button>`).join('')+'<button id="vx">✕ Cerrar</button>';
 function openV(on){vopen=on;$('cvw').style.display=on?'block':'none';$('vc').classList.toggle('on',on);if(on){tabs();viewer()}}
 $('vc').onclick=()=>openV(!vopen);

@@ -9,6 +9,7 @@
  for(const sign of[-1,1])for(const side of[-1,1])strip(sign*44,side*10.18,62,1.18);
  strip(-7.8,-43,1.18,62); // Próspero Bovino, vereda opuesta al Centro.
  strip(5.2,43,1.18,62);  // 25 de Mayo, vereda ancha.
+ strip(-44.55,0,61,1.4); strip(44.55,0,61,1.4); // Césped en la isla central de la avenida.
  // Alinear los troncos con el centro del césped, conservando su tamaño.
  for(const o of scene.children){
   if(o.userData.vegetacion!=='arbol')continue;

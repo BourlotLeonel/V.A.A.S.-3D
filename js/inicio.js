@@ -64,4 +64,5 @@
    const retry=document.getElementById('vaas-retry');retry.hidden=false;retry.onclick=()=>location.reload();console.error(error);
   }
  };
+select.value='off';button.click();
 })();

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<style>#vaas-welcome{display:none!important}</style>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>V.A.A.S. 3D · Suite de Simulación e Investigación</title>
@@ -19,7 +20,7 @@
   <div class="vaas-config">
    <h2>Prepará tu experiencia</h2><p>Elegí la calidad gráfica antes de entrar a la simulación.</p>
    <label for="vaas-quality">Calidad de gráficos</label>
-   <select id="vaas-quality" aria-describedby="vaas-quality-description"><option value="off">Original</option><option value="suave" selected>Mejorado</option><option value="realista">Realista</option><option value="cine">Cinemático</option></select>
+   <select id="vaas-quality" aria-describedby="vaas-quality-description"><option value="off" selected>Menor consumo</option></select>
    <p id="vaas-quality-description"></p>
    <button id="vaas-go" type="button">Iniciar simulación <span aria-hidden="true">→</span></button>
    <div class="vaas-footnote">Los recursos se cargarán al iniciar.<br>Podés cambiar la calidad más adelante.</div>
@@ -36,8 +37,6 @@
  </div>
 </section>
 <noscript><style>#vaas-welcome{display:none!important}</style><p style="position:fixed;z-index:100001;color:white;padding:30px">Activá JavaScript para usar el simulador.</p></noscript>
-
-
   <!-- ==================== HEADER PRINCIPAL ==================== -->
   <header id="vaas-header">
     <div class="header-brand">
@@ -51,7 +50,6 @@
         <span>Alegre, Bourlot, Sanchez Paz, Spiazzi</span>
       </div>
     </div>
-
     <nav class="header-tabs" aria-label="Cambiar vista">
       <button type="button" id="tab-3d" class="tab-btn active" data-view="3d">
         <span class="tab-dot green"></span>
@@ -62,7 +60,6 @@
         Control y Gr&aacute;ficos
       </button>
     </nav>
-
     <div class="header-status">
       <div class="status-pill">
         <span class="pulse-dot"></span>
@@ -71,24 +68,19 @@
       <span id="header-mode-badge" class="badge-mode">Con V.A.A.S.</span>
     </div>
   </header>
-
   <!-- ==================== LIENZO 3D (SIEMPRE ACTIVO) ==================== -->
   <canvas id="c"></canvas>
-
   <!-- ==================== PANTALLA 2D: CONTROL + GRÁFICOS ==================== -->
   <main id="view-2d" aria-label="Panel de Control 3D y Gráficos de Investigación">
     <div class="dashboard-container">
-
       <!-- FILA 1: CONFIGURACIÓN DEL ENTORNO 3D + MONITOR 3D + ESTADO EN VIVO -->
       <section class="dashboard-top-grid">
-
         <!-- Panel original #top integrado como tarjeta de configuración 3D -->
         <div class="pn card-panel" id="top">
           <div class="panel-header-bar">
             <span class="eyebrow">CONFIGURACIÓN DEL ENTORNO Y SIMULACIÓN 3D</span>
             <h1>San Lorenzo / Próspero Bovino / 25 de Mayo</h1>
           </div>
-
           <div class="clock-banner">
             <div>
               <small>Reloj de simulación</small>
@@ -96,12 +88,10 @@
             </div>
             <div id="mode" class="mode-status-text"></div>
           </div>
-
           <div class="control-group">
             <span class="group-label">Franjas horarias e iluminación 3D</span>
             <div class="row" id="scs"></div>
           </div>
-
           <div class="control-group">
             <span class="group-label">Velocidad y cámara del entorno 3D</span>
             <div class="row">
@@ -117,7 +107,6 @@
               <button id="v3">Calle</button>
             </div>
           </div>
-
           <div class="control-group">
             <span class="group-label">Escenario visualizado en el motor 3D</span>
             <div class="row">
@@ -125,7 +114,6 @@
               <button id="m2">Sin V.A.A.S. (30 s fijo)</button>
             </div>
           </div>
-
           <div class="control-group">
             <span class="group-label">Demanda vehicular y contingencia (Heartbeat)</span>
             <div class="row">
@@ -138,7 +126,6 @@
               <button id="bl">Cortar enlace V.A.A.S.</button>
             </div>
           </div>
-
           <div class="control-group">
             <span class="group-label">Sensores virtuales YOLO y visión de cámaras</span>
             <div class="row">
@@ -157,7 +144,6 @@
             </div>
           </div>
         </div>
-
         <!-- Mini-Monitor en vivo del Entorno 3D + Estado de Semáforos (#side) -->
         <div class="pn card-panel" id="side">
           <div class="panel-header-bar">
@@ -167,23 +153,18 @@
               <button type="button" id="btn-go-3d" class="btn-accent-sm">Ampliar 3D ↗</button>
             </div>
           </div>
-
           <!-- Espejo en tiempo real del canvas 3D para previsualizar cambios -->
           <div class="preview-3d-wrapper">
             <canvas id="preview-3d" width="480" height="220"></canvas>
             <span class="preview-badge">Render 3D en vivo</span>
           </div>
-
           <div class="sub-label">Estado lumínico y detección por acceso</div>
           <div id="cards"></div>
-
           <div class="sub-label" style="margin-top:10px;">Tabla comparativa simultánea (3D)</div>
           <table id="tb"></table>
           <small id="tot" style="color:#93a0b2;display:block;margin-top:6px"></small>
         </div>
-
       </section>
-
       <!-- FILA 2: CÁMARAS DE VISIÓN ARTIFICIAL (SE MUESTRAN AL ACTIVAR #vc O #cv) -->
       <section class="cameras-section">
         <div class="pn" id="feeds" style="display:none"></div>
@@ -200,7 +181,6 @@
           <div id="cvi" style="color:#93a0b2"></div>
         </div>
       </section>
-
       <!-- FILA 3: KPIs CIENTÍFICOS PARA LA INVESTIGACIÓN -->
       <section class="research-section">
         <div class="research-header">
@@ -213,7 +193,6 @@
             <button type="button" id="btn-export-csv" class="btn-primary-vaas">Exportar Informe CSV</button>
           </div>
         </div>
-
         <div class="kpi-grid">
           <div class="kpi-card">
             <span class="kpi-title">Ahorro de espera / vehículo</span>
@@ -236,10 +215,8 @@
             <small id="kpi-noise-est">Índice de fluidez acústica urbana</small>
           </div>
         </div>
-
         <!-- GRILLA DE 4 GRÁFICOS DE INVESTIGACIÓN -->
         <div class="charts-grid">
-
           <!-- GRÁFICO 1: Evolución del Tiempo de Espera -->
           <div class="chart-card">
             <div class="chart-head">
@@ -254,7 +231,6 @@
             </div>
             <div id="chart-wait-time" class="svg-chart-container"></div>
           </div>
-
           <!-- GRÁFICO 2: Evolución de Cola Detenida -->
           <div class="chart-card">
             <div class="chart-head">
@@ -269,7 +245,6 @@
             </div>
             <div id="chart-queue-time" class="svg-chart-container"></div>
           </div>
-
           <!-- GRÁFICO 3: Emisiones de CO2 y Combustible por Clase Vehicular -->
           <div class="chart-card">
             <div class="chart-head">
@@ -281,7 +256,6 @@
             </div>
             <div id="chart-co2-bars" class="svg-chart-container"></div>
           </div>
-
           <!-- GRÁFICO 4: Carga Vehicular y Estado por Acceso Vial -->
           <div class="chart-card">
             <div class="chart-head">
@@ -293,9 +267,7 @@
             </div>
             <div id="chart-approaches" class="svg-chart-container"></div>
           </div>
-
         </div>
-
         <!-- PARÁMETROS AMBIENTALES EDITABLES (MODELO V.A.A.S. 2D) -->
         <details class="emissions-config-box">
           <summary>Configuración de supuestos ambientales y consumo al ralentí (Investigación)</summary>
@@ -325,12 +297,9 @@
             </label>
           </div>
         </details>
-
       </section>
-
     </div>
   </main>
-
   <script type="application/json" id="vaas-script-manifest">
 [
   "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js",
@@ -346,7 +315,6 @@
   "./js/04-rutas-semaforos-camaras.js?v=zonas-sutiles-8",
   "./js/04b-relieve-25-de-mayo.js?v=final-bajada-3",
   "./js/04c-nubes-y-hierba.js?v=relieve-pasto-2",
-  "./js/04e-cielo-atmosferico.js?v=azul-2",
   "./js/04f-tonos-vegetacion.js?v=1",
   "./js/04g-entorno-periferico.js?v=3",
   "./js/05-modelos-vehiculos.js?v=proporciones-5",
@@ -355,7 +323,7 @@
   "./js/05d-colectivos-externos.js?v=ejes-reales-8",
   "./js/05e-camiones-externos.js?v=proporciones-5",
   "./js/05f-luces-vehiculos.js?v=1",
-  "./js/06-simulacion-y-control.js?v=luces-suaves-13",
+  "./js/06-simulacion-y-control.js?v=mobile-light-3",
   "./js/07-estadisticas-y-camaras.js",
   "./js/07a-vegetacion-graficos.js?v=tamanos-variados-4",
   "./js/07b-posprocesado.js?v=lente-vineta-8",
@@ -366,6 +334,6 @@
   "./js/09-graficos-investigacion.js?v=inicio-1"
 ]
   </script>
-  <script src="./js/inicio.js?v=1"></script>
+  <script src="./js/inicio.js?v=mobile-light-2"></script>
 </body>
 </html>
